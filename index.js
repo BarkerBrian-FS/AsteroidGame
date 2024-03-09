@@ -1,15 +1,18 @@
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 
+//set canvas to screen size
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+//create player
 class Player{
     constructor({position, velocity}){
         this.position = position;
         this.velocity = velocity;
         this.rotation = 0;
     }
+    //draw ship
     draw(){
         ctx.save();
         ctx.rotate(this.rotation);
@@ -32,8 +35,28 @@ class Player{
 };
 
 //add projectiles
+class Projectile{
+    constructor({position, velocity}){
+        this.position = position;
+        this.velocity = velocity;
+        this.radius = 5;
+    };
+    //draw circular projectiles and update 
+    draw(){
+        ctx.beginPath()
+        ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, false)
+        ctx.fillStyle = 'white';
+        ctx.fill();
+        ctx.closePath();
+    };
+    update(){
+        this.draw();
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+    }
+};
 
-
+//set player position to middle of screen 
 const player = new Player({
     position:{x: canvas.width/2, y: canvas.height/2}, 
     velocity:{x: 0, y: 0}
@@ -41,6 +64,7 @@ const player = new Player({
 
 player.draw();
 
+//set keys for controls
 const keys = {
     w:{
         pressed: false
@@ -54,8 +78,17 @@ const keys = {
     d:{
         pressed: false
     }
-}
+};
 
+//set speed an rotation to player
+const SPEED = 3;
+const ROTATIONAL_SPEED = 0.05;
+const FRICTION = 0.97;
+const PROJECTILE_SPEED = 3;
+
+const projectiles = [];
+
+//add animation function to continuously create player ship 
 function animate(){
     window.requestAnimationFrame(animate);
     ctx.fillStyle = 'black';
@@ -67,9 +100,13 @@ function animate(){
 
     if(keys.w.pressed) player.velocity.x = 1;
 
-    if (keys.d.pressed)player.rotation += 0.01
-}
+    if (keys.d.pressed)player.rotation += 0.01;
+};
 
+
+
+
+//add event for key down controls
 window.addEventListener('keydown',(event)=>{
     switch (event.code){
         case 'KeyW':
@@ -91,6 +128,7 @@ window.addEventListener('keydown',(event)=>{
     }
 });
 
+//add event for keyup controls
 window.addEventListener('keyup',(event)=>{
     switch (event.code){
         case 'KeyW':
