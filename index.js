@@ -8,14 +8,21 @@ class Player{
     constructor({position, velocity}){
         this.position = position;
         this.velocity = velocity;
+        this.rotation = 0;
     }
     draw(){
+        ctx.save();
+        ctx.rotate(this.rotation);
+        ctx.translate(-this.position.x, -this.position.y);
+
+        ctx.beginPath();
         ctx.moveTo(this.position.x + 30, this.position.y);
         ctx.lineTo(this.position.x-10, this.position.y-10);
         ctx.lineTo(this.position.x-10, this.position.y+10);
         ctx.closePath();
         ctx.strokeStyle = 'white';
         ctx.stroke();
+        ctx.restore();
     }
     update(){
         this.draw();
@@ -23,6 +30,8 @@ class Player{
         this.position.y += this.position.velocity.y;
     }
 };
+
+//add projectiles
 
 
 const player = new Player({
@@ -33,16 +42,16 @@ const player = new Player({
 player.draw();
 
 const keys = {
-    W:{
+    w:{
         pressed: false
     },
-    A:{
+    a:{
         pressed: false
     },
-    S:{
+    s:{
         pressed: false
     },
-    D:{
+    d:{
         pressed: false
     }
 }
@@ -54,25 +63,50 @@ function animate(){
 
     player.update();
 
-    if(keys.W.pressed) player.velocity.x = 1
+    player.velocity.x = 0;
+
+    if(keys.w.pressed) player.velocity.x = 1;
+
+    if (keys.d.pressed)player.rotation += 0.01
 }
 
 window.addEventListener('keydown',(event)=>{
     switch (event.code){
         case 'KeyW':
-            keys.W.pressed = true
+            keys.w.pressed = true;
+            console.log('w was pressed');
+            break
+        case 'KeyA':
+            keys.a.pressed = true;
+            console.log('a was pressed');
+            break
+        case 'KeyS':
+            keys.s.pressed = true;
+            console.log('s was pressed');
+            break
+        case 'KeyD':
+            keys.d.pressed = true;
+            console.log('d was pressed');
+            break
+    }
+});
+
+window.addEventListener('keyup',(event)=>{
+    switch (event.code){
+        case 'KeyW':
+            keys.w.pressed = false
             console.log('w was pressed')
             break
         case 'KeyA':
-            keys.A.pressed = true
+            keys.a.pressed = false
             console.log('a was pressed')
             break
         case 'KeyS':
-            keys.S.pressed = true
+            keys.s.pressed = false
             console.log('s was pressed')
             break
         case 'KeyD':
-            keys.D.pressed = true
+            keys.d.pressed = false
             console.log('d was pressed')
             break
     }
